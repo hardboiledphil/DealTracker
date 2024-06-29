@@ -1,7 +1,7 @@
 package org.hardboiled;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.transaction.Transactional;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -20,26 +20,25 @@ public class DealTrackerManager {
     }
 
     Comparator<DealTracker> chainAndNumberAndTransactionRefSorter
-            = Comparator.comparing(DealTracker::getChain)
-            .thenComparing(DealTracker::getChainNumber)
-            .thenComparing(DealTracker::getDealReference);
+            = Comparator
+                .comparing(DealTracker::getChain)
+                .thenComparing(DealTracker::getChainNumber)
+                .thenComparing(DealTracker::getDealReference);
 
     /**
      * We will take in a dealtracker item
      * If it doesn't exist then we will create it and store it (updating the Id)
-     * If it does exist then we will update it where
-     *     appCompleteTime is not set
+     * If it does exist then we will update it where appCompleteTime is not set
      * and we will delete it where the appCompleteTime is set
-     * @param dealTracker
-     * @return
+     * @param dealToProcess the deal to process
      */
     @Transactional
     public void processDealTracker(DealTracker dealToProcess) {
-        log.info("Processing deal -> " + dealToProcess.dealReference);
+        log.info("Processing deal -> {}", dealToProcess.dealReference);
         // no id - so we assume it's new and needs persisting
         if (dealToProcess.id == null
           && dealToProcess.appCompleteTime == null) {
-            log.info("Persisting new DealTracker -> " + dealToProcess.dealReference);
+            log.info("Persisting new DealTracker -> {}", dealToProcess.dealReference);
             dealToProcess.persist();
             return;
         }
@@ -50,7 +49,7 @@ public class DealTrackerManager {
                 .filter(dealTracker -> dealTracker.id.equals(dealToProcess.id)).findFirst();
 
         if (savedDealOptional.isEmpty()) {
-            log.error("Could not find DealTracker id -> " + dealToProcess.id);
+            log.error("Could not find DealTracker id -> {}", dealToProcess.id);
             return;
         }
 
@@ -58,7 +57,7 @@ public class DealTrackerManager {
 
         // if we find the deal in the db but the new version is app complete then delete
         if (dealToProcess.appCompleteTime != null) {
-            log.info("  Deleting deal -> " + savedDeal.dealReference);
+            log.info("  Deleting deal -> {}", savedDeal.dealReference);
             savedDeal.delete();
             // This field is db transient but we want to send it back to user
 //            savedDeal.setDeleted(true);

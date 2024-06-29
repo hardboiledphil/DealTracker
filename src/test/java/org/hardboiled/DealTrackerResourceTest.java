@@ -5,13 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-
 import java.time.LocalDateTime;
-
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.blankOrNullString;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 @Slf4j

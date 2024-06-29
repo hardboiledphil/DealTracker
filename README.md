@@ -1,8 +1,15 @@
-# im-mem-db
+# deal-tracker
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Spike to show we can store the state of deal flows as "messages" arrive into the system.
+We are required to be able to say how many messages are "waiting" to be sent to downstream
+systems and how many have been sent but not completed and hence "in progress".
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+In the end the application derived from this work was deployed into production where it
+handled a flow of Kafka sourced events to drive the "LIVE" state which can be queried
+very efficiently.  I think however there was some weird issue with H2 and I ended up
+just replacing it with a hashmap/set as without a properly persisted database the state
+could not be guaranteed but was however more of a monitoring tool than a business critical
+application.
 
 ## Running the application in dev mode
 
@@ -43,7 +50,7 @@ Or, if you don't have GraalVM installed, you can run the native executable build
 ./mvnw package -Pnative -Dquarkus.native.container-build=true
 ```
 
-You can then execute your native executable with: `./target/im-mem-db-1.0.0-SNAPSHOT-runner`
+You can then execute your native executable with: `./target/deal-tracker-1.0.0-SNAPSHOT-runner`
 
 If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
 
