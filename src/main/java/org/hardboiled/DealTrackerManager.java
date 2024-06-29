@@ -1,8 +1,12 @@
 package org.hardboiled;
 
+import io.quarkus.runtime.Startup;
+import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +58,7 @@ public class DealTrackerManager {
             return;
         }
 
+        // Optional will have a value or it would have returned in section above
         val savedDeal = savedDealOptional.get();
 
         // if we find the deal in the db but the new version is app complete then delete
@@ -77,14 +82,12 @@ public class DealTrackerManager {
         log.info("In getDealsInProcessing");
         return DealTracker
                 .<DealTracker>findAll()
-                .stream().peek(dealTrackerItem -> log.info("tracking deal -> {} {} {} {} {}", dealTrackerItem.dealReference,
-                                dealTrackerItem.arrivalTime, dealTrackerItem.sentTime, dealTrackerItem.vestCompleteTime,
-                        dealTrackerItem.appCompleteTime))
+                .stream()
                 .filter(dealTrackerItem -> !(dealTrackerItem.sentTime == null
                         && dealTrackerItem.vestCompleteTime == null
                         && dealTrackerItem.appCompleteTime == null))
                 .sorted(chainAndNumberAndTransactionRefSorter)
-                .peek(dealTrackerItem -> log.info("tracking deal -> {} {} {} {} {}", dealTrackerItem.dealReference,
+                .peek(dealTrackerItem -> log.info("  tracking deal -> {} {} {} {} {}", dealTrackerItem.dealReference,
                         dealTrackerItem.arrivalTime, dealTrackerItem.sentTime, dealTrackerItem.vestCompleteTime,
                         dealTrackerItem.appCompleteTime))
                 .toList();
@@ -95,14 +98,12 @@ public class DealTrackerManager {
         log.info("In getDealsWaiting");
         return DealTracker
                 .<DealTracker>findAll()
-                .stream().peek(dealTrackerItem -> log.info("tracking deal -> {} {} {} {} {}", dealTrackerItem.dealReference,
-                        dealTrackerItem.arrivalTime, dealTrackerItem.sentTime, dealTrackerItem.vestCompleteTime,
-                dealTrackerItem.appCompleteTime))
+                .stream()
                 .filter(dealTrackerItem -> dealTrackerItem.sentTime == null
                         && dealTrackerItem.vestCompleteTime == null
                         && dealTrackerItem.appCompleteTime == null)
                 .sorted(chainAndNumberAndTransactionRefSorter)
-                .peek(dealTrackerItem -> log.info("tracking deal -> {} {} {} {} {}", dealTrackerItem.dealReference,
+                .peek(dealTrackerItem -> log.info("  tracking deal -> {} {} {} {} {}", dealTrackerItem.dealReference,
                         dealTrackerItem.arrivalTime, dealTrackerItem.sentTime, dealTrackerItem.vestCompleteTime,
                         dealTrackerItem.appCompleteTime))
                 .toList();
@@ -170,8 +171,22 @@ public class DealTrackerManager {
 
     @Transactional
     public Optional<DealTracker> getByTransactionRef(final String transactionRef) {
-        log.info("Getting transRef -> {}", transactionRef);
+        log.info("Getting by transRef -> {}", transactionRef);
         return getAll().stream().filter(dealTracker -> dealTracker.dealReference.equals(transactionRef)).findFirst();
     }
+
+    // uncomment to create an entry on start up - useful for then doing a get on so you can see the json produced
+    // and you can edit it and send it back in
+//    void onStart(@Observes StartupEvent ev) {
+//        // Your startup logic here
+//        System.out.println("Application started - adding an entity automatically");
+//        this.create("abc123::1",
+//                "chainABC",
+//                1,
+//                LocalDateTime.of(2024, Month.SEPTEMBER, 4, 5, 6),
+//                LocalDateTime.of(2024, Month.SEPTEMBER, 5, 6, 7),
+//                LocalDateTime.of(2024, Month.SEPTEMBER, 6, 7, 8),
+//                LocalDateTime.of(2024, Month.SEPTEMBER, 7, 8, 9));
+//    }
 
 }

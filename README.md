@@ -11,6 +11,21 @@ just replacing it with a hashmap/set as without a properly persisted database th
 could not be guaranteed but was however more of a monitoring tool than a business critical
 application.
 
+to add a dealTracker entity
+
+curl -d '{"dealReference":"abc123::1","chain":"chainABC","chainNumber":1,"arrivalTime":"2024-09-04T05:06:00","sentTime":"2024-09-05T06:07:00","vestCompleteTime":null,"appCompleteTime":null}' -H 'Content-Type: application/json' -X POST http://localhost:8080/dealtracker/process
+
+Note if you populate all 4 date fields then it will consider it completed and ignore/delete it
+
+To query:
+
+curl http://localhost:8080/dealtracker/getDealsInProcessing
+curl http://localhost:8080/dealtracker/getDealsWaiting
+curl http://localhost:8080/dealtracker/getAll
+curl http://localhost:8080/dealtracker/get/transactionRef/abc123::2
+
+
+
 ## Running the application in dev mode
 
 You can run your application in dev mode that enables live coding using:

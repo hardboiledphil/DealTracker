@@ -9,9 +9,12 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Path("/dealtracker")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -27,7 +30,7 @@ public class DealTrackerResource {
     }
 
     @GET
-    @Path("/get/{transactionRef}")
+    @Path("/get/transactionRef/{transactionRef}")
     public Optional<DealTracker> getByTransactionRef(@PathParam("transactionRef") String transactionRef) {
         return dealTrackerManager.getByTransactionRef(transactionRef);
     }
@@ -47,6 +50,7 @@ public class DealTrackerResource {
     @POST
     @Path("/process")
     public void processDealTrackerMessage(DealTracker dealTracker) {
+        log.info("Process called for deal -> {}", dealTracker);
         dealTrackerManager.processDealTracker(dealTracker);
     }
 
