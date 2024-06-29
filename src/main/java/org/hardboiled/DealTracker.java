@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
+@Getter
 @Entity
 @Table(name = "dealtracker")
 @Builder
@@ -42,12 +43,16 @@ public class DealTracker extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-            @Getter    Long id;
-            @Getter    String dealReference;
-            @Getter    String chain;
-            @Getter    int chainNumber;
-    @Setter @Getter    LocalDateTime arrivalTime;
-    @Setter @Getter    LocalDateTime sentTime;
-    @Setter @Getter    LocalDateTime vestCompleteTime;
-    @Setter @Getter    LocalDateTime appCompleteTime;
+    Long id;
+            String dealReference;
+            String chain;
+            int chainNumber;
+    @Setter
+    LocalDateTime arrivalTime;
+    @Setter
+    LocalDateTime sentTime;
+    @Setter
+    LocalDateTime vestCompleteTime;
+    @Setter
+    LocalDateTime appCompleteTime;
 }

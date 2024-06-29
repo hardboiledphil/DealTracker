@@ -49,10 +49,11 @@ public class MetricDataTest {
                 null,
                 null,
                 null);
-        dt2.setSentTime(sentTime);
         assert (dealTrackerManager.getAll().stream()).filter(toUpdate ->
                     toUpdate.id.equals(dt2.id)
                 ).toList().size() == 1;
+        dealTrackerManager.update(dt2);
+        dt2.setSentTime(sentTime);
         dealTrackerManager.update(dt2);
         assert (dealTrackerManager.getAll().stream().filter(updated ->
                     updated.id.equals(dt2.id)
@@ -142,8 +143,8 @@ public class MetricDataTest {
         dt4.setVestCompleteTime(LocalDateTime.now());
         dealTrackerManager.processDealTracker(dt4);
 
-        assertEquals(0, dealTrackerManager.getDealsInProcessing().size());
-        assertEquals(1, dealTrackerManager.getDealsWaiting().size());
+        assertEquals(1, dealTrackerManager.getDealsInProcessing().size());
+        assertEquals(0, dealTrackerManager.getDealsWaiting().size());
 
         // tidy up
         Stream.of(dt1, dt2, dt3, dt4)

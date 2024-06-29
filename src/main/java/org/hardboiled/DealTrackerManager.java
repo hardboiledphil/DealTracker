@@ -15,6 +15,7 @@ import lombok.val;
 @ApplicationScoped
 public class DealTrackerManager {
 
+    @Transactional()
     public List<DealTracker> getAll() {
         return DealTracker.findAll().list();
     }
@@ -59,8 +60,6 @@ public class DealTrackerManager {
         if (dealToProcess.appCompleteTime != null) {
             log.info("  Deleting deal -> {}", savedDeal.dealReference);
             savedDeal.delete();
-            // This field is db transient but we want to send it back to user
-//            savedDeal.setDeleted(true);
             return;
         }
 
@@ -73,6 +72,7 @@ public class DealTrackerManager {
         log.info("  Updating deal -> {}", savedDeal.dealReference);
     }
 
+    @Transactional
     public List<DealTracker> getDealsInProcessing() {
         log.info("In getDealsInProcessing");
         return DealTracker
@@ -90,6 +90,7 @@ public class DealTrackerManager {
                 .toList();
     }
 
+    @Transactional
     public List<DealTracker> getDealsWaiting() {
         log.info("In getDealsWaiting");
         return DealTracker
@@ -140,7 +141,7 @@ public class DealTrackerManager {
             prevDealTrackerItem.persist();
             log.info("updated deal -> {}", prevDealTrackerItem.dealReference );
         } else {
-            log.error("Could not update DealTracker entity -> " + dealTrackerItem.id);
+            log.error("Could not update DealTracker entity -> {}", dealTrackerItem.id);
         }
     }
 
@@ -150,9 +151,9 @@ public class DealTrackerManager {
 
         if (prevDealTrackerItem != null) {
             prevDealTrackerItem.delete();
-            log.info("Deleted -> {}", dealTrackerItem.id);
+            log.info("Deleted by entity -> {}", dealTrackerItem.id);
         } else {
-            log.error("Could not delete DealTracker entity -> " + dealTrackerItem.id);
+            log.error("Could not delete DealTracker entity -> {}", dealTrackerItem.id);
         }
     }
 
@@ -164,9 +165,10 @@ public class DealTrackerManager {
                 .findFirst();
 
         dealToDelete.ifPresent(PanacheEntityBase::delete);
-        log.info("Deleted -> {}", transactionRef);
+        log.info("Deleted by transactionRef -> {}", transactionRef);
     }
 
+    @Transactional
     public Optional<DealTracker> getByTransactionRef(final String transactionRef) {
         log.info("Getting transRef -> {}", transactionRef);
         return getAll().stream().filter(dealTracker -> dealTracker.dealReference.equals(transactionRef)).findFirst();
