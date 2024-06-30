@@ -22,7 +22,7 @@ To query:
 curl http://localhost:8080/dealtracker/getDealsInProcessing
 curl http://localhost:8080/dealtracker/getDealsWaiting
 curl http://localhost:8080/dealtracker/getAll
-curl http://localhost:8080/dealtracker/get/transactionRef/abc123::2
+curl http://localhost:8080/dealtracker/get/abc123::2
 
 
 
