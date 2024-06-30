@@ -30,7 +30,7 @@ public class DealTrackerResource {
     }
 
     @GET
-    @Path("/get/transactionRef/{transactionRef}")
+    @Path("/get/{transactionRef}")
     public Optional<DealTracker> getByTransactionRef(@PathParam("transactionRef") String transactionRef) {
         return dealTrackerManager.getByTransactionRef(transactionRef);
     }
